@@ -7,235 +7,135 @@
 <title>Flash Availability — Nadia Renee</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;1,300;1,400&family=Cinzel:wght@400;500&display=swap" rel="stylesheet">
 <style>
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  :root {
-    --cream: #f7f4ef;
-    --cream-dark: #ede9e0;
-    --parchment: #e8e2d5;
-    --ink: #1c1a18;
-    --ink-mid: #3d3a35;
-    --ink-soft: #6b6560;
-    --gold: #b8935a;
-    --gold-light: #d4aa72;
-    --available: #c9a96e;
-    --taken: #8b3a3a;
-    --border: rgba(28,26,24,0.12);
-  }
-  body {
-    background: var(--cream) !important;
-    color: var(--ink) !important;
-    color-scheme: light only;
-    font-family: 'Cormorant Garamond', serif;
-    min-height: 100vh;
-    padding: 50px 20px 70px;
-  }
-  .container { max-width: 760px; margin: 0 auto; }
-
-  /* Header */
-  header {
-    text-align: center;
-    margin-bottom: 50px;
-    padding-bottom: 32px;
-    border-bottom: 1px solid var(--border);
-  }
-  .header-ornament {
-    color: var(--gold);
-    font-size: 14px;
-    letter-spacing: 10px;
-    margin-bottom: 20px;
-    opacity: 0.7;
-  }
-  h1 {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(20px, 4vw, 32px);
-    font-weight: 400;
-    letter-spacing: 5px;
-    color: var(--ink);
-    margin-bottom: 8px;
-  }
-  .subtitle {
-    font-style: italic;
-    color: var(--ink-soft);
-    font-size: 17px;
-    letter-spacing: 0.5px;
-    margin-bottom: 20px;
-  }
-  .booking-note {
-    display: inline-block;
-    border: 1px solid var(--gold);
-    color: var(--gold);
-    font-family: 'Cinzel', serif;
-    font-size: 10px;
-    letter-spacing: 3px;
-    padding: 8px 22px;
-  }
-
-  /* Legend */
-  .legend {
-    display: flex;
-    justify-content: center;
-    gap: 32px;
-    margin-bottom: 44px;
-    font-size: 13px;
-    letter-spacing: 1px;
-  }
-  .legend-item { display: flex; align-items: center; gap: 8px; color: var(--ink-soft); font-style: italic; }
-  .legend-dot { width: 7px; height: 7px; border-radius: 50%; }
-  .legend-dot.available { background: var(--available); }
-  .legend-dot.taken { background: var(--taken); }
-
-  /* Grid */
-  .flash-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
-    gap: 24px;
-    margin-bottom: 60px;
-  }
-
-  /* Card */
-  .flash-card {
-    background: #fff;
-    border: 1px solid var(--border);
-    position: relative;
-    transition: all 0.3s ease;
-    overflow: hidden;
-  }
-  .flash-card:hover {
-    border-color: rgba(184,147,90,0.5);
-    box-shadow: 0 4px 24px rgba(28,26,24,0.08);
-  }
-  .flash-card.taken { opacity: 0.65; }
-
-  /* Image */
-  .card-image { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
-  .card-image-placeholder {
-    width: 100%; aspect-ratio: 4/3;
-    display: flex; align-items: center; justify-content: center;
-    background: var(--cream-dark);
-    color: var(--ink-soft); font-style: italic; font-size: 13px; letter-spacing: 1px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  /* Taken overlay */
-  .taken-overlay {
-    display: none; position: absolute; top: 0; left: 0; right: 0;
-    aspect-ratio: 4/3;
-    background: rgba(247,244,239,0.6);
-    align-items: center; justify-content: center; z-index: 2;
-  }
-  .flash-card.taken .taken-overlay { display: flex; }
-  .taken-stamp {
-    font-family: 'Cinzel', serif;
-    font-size: 20px; letter-spacing: 6px;
-    color: var(--taken);
-    border: 2px solid var(--taken);
-    padding: 8px 18px;
-    transform: rotate(-8deg);
-    background: rgba(255,255,255,0.7);
-  }
-
-  /* Card body */
-  .card-body { padding: 20px 22px; }
-  .card-number {
-    font-family: 'Cinzel', serif; font-size: 9px;
-    letter-spacing: 3px; color: var(--gold); margin-bottom: 7px;
-  }
-  .card-title { font-size: 20px; color: var(--ink); margin-bottom: 5px; line-height: 1.3; }
-  .card-description { font-style: italic; font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; line-height: 1.5; }
-  .card-footer {
-    display: flex; justify-content: space-between; align-items: center;
-    border-top: 1px solid var(--border); padding-top: 14px;
-  }
-  .card-price { font-family: 'Cinzel', serif; font-size: 14px; color: var(--gold); letter-spacing: 1px; }
-  .card-status { font-size: 10px; letter-spacing: 2px; font-family: 'Cinzel', serif; text-transform: uppercase; }
-  .status-available { color: var(--available); }
-  .status-taken { color: var(--taken); }
-
-  /* States */
-  .loading { text-align: center; padding: 60px 20px; color: var(--ink-soft); font-style: italic; font-size: 16px; }
-  .error-state { text-align: center; padding: 40px 20px; color: var(--taken); font-style: italic; font-size: 14px; border: 1px dashed rgba(139,58,58,0.3); }
-
-  /* Footer */
-  footer { text-align: center; padding-top: 32px; border-top: 1px solid var(--border); }
-  .footer-name { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 5px; color: var(--gold); margin-bottom: 6px; }
-  .footer-handle { font-style: italic; color: var(--ink-soft); font-size: 14px; }
-
-  @media (max-width: 480px) { .flash-grid { grid-template-columns: 1fr; } }
+ *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ :root {
+   --cream: #f7f4ef;
+   --cream-dark: #ede9e0;
+   --parchment: #e8e2d5;
+   --ink: #1c1a18;
+   --ink-mid: #3d3a35;
+   --ink-soft: #6b6560;
+   --gold: #b8935a;
+   --gold-light: #d4aa72;
+   --available: #c9a96e;
+   --taken: #8b3a3a;
+   --border: rgba(28,26,24,0.12);
+ }
+ body {
+   background: var(--cream) !important;
+   color: var(--ink) !important;
+   color-scheme: light only;
+   font-family: 'Cormorant Garamond', serif;
+   min-height: 100vh;
+   padding: 50px 20px 70px;
+ }
+ .container { max-width: 760px; margin: 0 auto; }
+ header {
+   text-align: center;
+   margin-bottom: 50px;
+   padding-bottom: 32px;
+   border-bottom: 1px solid var(--border);
+ }
+ .header-ornament { color: var(--gold); font-size: 14px; letter-spacing: 10px; margin-bottom: 20px; opacity: 0.7; }
+ h1 { font-family: 'Cinzel', serif; font-size: clamp(20px, 4vw, 32px); font-weight: 400; letter-spacing: 5px; color: var(--ink); margin-bottom: 8px; }
+ .subtitle { font-style: italic; color: var(--ink-soft); font-size: 17px; letter-spacing: 0.5px; margin-bottom: 20px; }
+ .booking-note { display: inline-block; border: 1px solid var(--gold); color: var(--gold); font-family: 'Cinzel', serif; font-size: 10px; letter-spacing: 3px; padding: 8px 22px; }
+ .legend { display: flex; justify-content: center; gap: 32px; margin-bottom: 44px; font-size: 13px; letter-spacing: 1px; }
+ .legend-item { display: flex; align-items: center; gap: 8px; color: var(--ink-soft); font-style: italic; }
+ .legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+ .legend-dot.available { background: var(--available); }
+ .legend-dot.taken { background: var(--taken); }
+ .flash-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 24px; margin-bottom: 60px; }
+ .flash-card { background: #fff; border: 1px solid var(--border); position: relative; transition: all 0.3s ease; overflow: hidden; }
+ .flash-card:hover { border-color: rgba(184,147,90,0.5); box-shadow: 0 4px 24px rgba(28,26,24,0.08); }
+ .flash-card.taken { opacity: 0.65; }
+ .card-image { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+ .card-image-placeholder { width: 100%; aspect-ratio: 4/3; display: flex; align-items: center; justify-content: center; background: var(--cream-dark); color: var(--ink-soft); font-style: italic; font-size: 13px; letter-spacing: 1px; border-bottom: 1px solid var(--border); }
+ .taken-overlay { display: none; position: absolute; top: 0; left: 0; right: 0; aspect-ratio: 4/3; background: rgba(247,244,239,0.6); align-items: center; justify-content: center; z-index: 2; }
+ .flash-card.taken .taken-overlay { display: flex; }
+ .taken-stamp { font-family: 'Cinzel', serif; font-size: 20px; letter-spacing: 6px; color: var(--taken); border: 2px solid var(--taken); padding: 8px 18px; transform: rotate(-8deg); background: rgba(255,255,255,0.7); }
+ .card-body { padding: 20px 22px; }
+ .card-number { font-family: 'Cinzel', serif; font-size: 9px; letter-spacing: 3px; color: var(--gold); margin-bottom: 7px; }
+ .card-title { font-size: 20px; color: var(--ink); margin-bottom: 5px; line-height: 1.3; }
+ .card-description { font-style: italic; font-size: 13px; color: var(--ink-soft); margin-bottom: 16px; line-height: 1.5; }
+ .card-footer { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 14px; }
+ .card-price { font-family: 'Cinzel', serif; font-size: 14px; color: var(--gold); letter-spacing: 1px; }
+ .card-status { font-size: 10px; letter-spacing: 2px; font-family: 'Cinzel', serif; text-transform: uppercase; }
+ .status-available { color: var(--available); }
+ .status-taken { color: var(--taken); }
+ .loading { text-align: center; padding: 60px 20px; color: var(--ink-soft); font-style: italic; font-size: 16px; }
+ .error-state { text-align: center; padding: 40px 20px; color: var(--taken); font-style: italic; font-size: 14px; border: 1px dashed rgba(139,58,58,0.3); }
+ footer { text-align: center; padding-top: 32px; border-top: 1px solid var(--border); }
+ .footer-name { font-family: 'Cinzel', serif; font-size: 12px; letter-spacing: 5px; color: var(--gold); margin-bottom: 6px; }
+ .footer-handle { font-style: italic; color: var(--ink-soft); font-size: 14px; }
+ @media (max-width: 480px) { .flash-grid { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
 <div class="container">
-  <header>
-    <div class="header-ornament">✦ ✦ ✦</div>
-    <h1>FLASH AVAILABILITY</h1>
-    <p class="subtitle">Nadia Renee — Fine Line Victorian Botanical</p>
-    <div class="booking-note">CURRENTLY BOOKING — INQUIRE BELOW</div>
-  </header>
-
-  <div class="legend">
-    <div class="legend-item"><div class="legend-dot available"></div><span>Available</span></div>
-    <div class="legend-item"><div class="legend-dot taken"></div><span>Taken</span></div>
-  </div>
-
-  <div class="flash-grid" id="flashGrid">
-    <div class="loading">Loading designs...</div>
-  </div>
-
-  <footer>
-    <div class="footer-name">NADIA RENEE</div>
-    <div class="footer-handle">@nadias.tattoos</div>
-  </footer>
+ <header>
+   <div class="header-ornament">✦ ✦ ✦</div>
+   <h1>FLASH AVAILABILITY</h1>
+   <p class="subtitle">Nadia Renee — Fine Line Victorian Botanical</p>
+   <div class="booking-note">CURRENTLY BOOKING — INQUIRE BELOW</div>
+ </header>
+ <div class="legend">
+   <div class="legend-item"><div class="legend-dot available"></div><span>Available</span></div>
+   <div class="legend-item"><div class="legend-dot taken"></div><span>Taken</span></div>
+ </div>
+ <div class="flash-grid" id="flashGrid">
+   <div class="loading">Loading designs...</div>
+ </div>
+ <footer>
+   <div class="footer-name">NADIA RENEE</div>
+   <div class="footer-handle">@nadias.tattoos</div>
+ </footer>
 </div>
-
 <script>
-  const AIRTABLE_TOKEN = 'patqNElyRNPsOfM4r.90e5b6669a59ab11c9479cf941d4f140516-da820f8dfd4040bb2c38c3aa8a7a5';
-  const BASE_ID = 'app7riAiRPs733Fgk';
-  const TABLE_ID = 'tblAgXGBPVQlx7Gs2';
+ const AIRTABLE_TOKEN = 'patqNElyRNPsOfM4r.90e5b6669a59ab11c9479cf941d4f140516-da820f8dfd4040bb2c38c3aa8a7a5';
+ const BASE_ID = 'app7riAiRPs733Fgk';
+ const TABLE_ID = 'tblAgXGBPVQlx7Gs2';
 
-  async function loadDesigns() {
-    const grid = document.getElementById('flashGrid');
-    try {
-      const res = await fetch(
-        `https://corsproxy.io/?https%3A%2F%2Fapi.airtable.com%2Fv0%2F${BASE_ID}%2F${TABLE_ID}%3Fsort%5B0%5D%5Bfield%5D%3DTitle%26sort%5B0%5D%5Bdirection%5D%3Dasc`,
-        { headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` } }
-      );
-      if (!res.ok) throw new Error('Failed to load');
-      const data = await res.json();
-      const designs = data.records;
-      if (!designs || designs.length === 0) {
-        grid.innerHTML = '<div class="loading">No flash designs available right now — check back soon.</div>';
-        return;
-      }
-      grid.innerHTML = designs.map((record, i) => {
-        const f = record.fields;
-        const taken = f.Status === 'Taken';
-        const image = f.Image && f.Image[0] ? f.Image[0].url : null;
-        return `
-          <div class="flash-card ${taken ? 'taken' : ''}">
-            <div class="taken-overlay"><div class="taken-stamp">TAKEN</div></div>
-            ${image
-              ? `<img class="card-image" src="${image}" alt="${f.Title || ''}">`
-              : `<div class="card-image-placeholder">no image</div>`
-            }
-            <div class="card-body">
-              <div class="card-number">No. ${String(i + 1).padStart(2,'0')}</div>
-              <div class="card-title">${f.Title || 'Untitled'}</div>
-              ${f.Description ? `<div class="card-description">${f.Description}</div>` : ''}
-              <div class="card-footer">
-                <div class="card-price">${f.Price || ''}</div>
-                <div class="card-status ${taken ? 'status-taken' : 'status-available'}">
-                  ${taken ? 'Taken' : 'Available'}
-                </div>
-              </div>
-            </div>
-          </div>`;
-      }).join('');
-    } catch(err) {
-      grid.innerHTML = `<div class="error-state">Unable to load designs right now. Please check back soon.</div>`;
-    }
-  }
+ async function loadDesigns() {
+   const grid = document.getElementById('flashGrid');
+   try {
+     const url = `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?sort%5B0%5D%5Bfield%5D=Title&sort%5B0%5D%5Bdirection%5D=asc`;
+     const res = await fetch(
+       `https://api.allorigins.win/raw?url=${encodeURIComponent(url)}`,
+       { headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` } }
+     );
+     if (!res.ok) throw new Error('Failed to load');
+     const data = await res.json();
+     const designs = data.records;
+     if (!designs || designs.length === 0) {
+       grid.innerHTML = '<div class="loading">No flash designs available right now — check back soon.</div>';
+       return;
+     }
+     grid.innerHTML = designs.map((record, i) => {
+       const f = record.fields;
+       const taken = f.Status === 'Taken';
+       const image = f['Field 5'] && f['Field 5'][0] ? f['Field 5'][0].url : null;
+       return `
+         <div class="flash-card ${taken ? 'taken' : ''}">
+           <div class="taken-overlay"><div class="taken-stamp">TAKEN</div></div>
+           ${image ? `<img class="card-image" src="${image}" alt="${f.Title || ''}">` : `<div class="card-image-placeholder">no image</div>`}
+           <div class="card-body">
+             <div class="card-number">No. ${String(i + 1).padStart(2,'0')}</div>
+             <div class="card-title">${f.Title || 'Untitled'}</div>
+             ${f.Description ? `<div class="card-description">${f.Description}</div>` : ''}
+             <div class="card-footer">
+               <div class="card-price">${f.Price || ''}</div>
+               <div class="card-status ${taken ? 'status-taken' : 'status-available'}">${taken ? 'Taken' : 'Available'}</div>
+             </div>
+           </div>
+         </div>`;
+     }).join('');
+   } catch(err) {
+     grid.innerHTML = `<div class="error-state">Unable to load designs right now. Please check back soon.</div>`;
+   }
+ }
 
-  loadDesigns();
+ loadDesigns();
 </script>
 </body>
 </html>
