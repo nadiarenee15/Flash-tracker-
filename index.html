@@ -196,7 +196,7 @@
     const grid = document.getElementById('flashGrid');
     try {
       const res = await fetch(
-        `https://api.airtable.com/v0/${BASE_ID}/${TABLE_ID}?sort[0][field]=Title&sort[0][direction]=asc`,
+        `https://corsproxy.io/?https%3A%2F%2Fapi.airtable.com%2Fv0%2F${BASE_ID}%2F${TABLE_ID}%3Fsort%5B0%5D%5Bfield%5D%3DTitle%26sort%5B0%5D%5Bdirection%5D%3Dasc`,
         { headers: { Authorization: `Bearer ${AIRTABLE_TOKEN}` } }
       );
       if (!res.ok) throw new Error('Failed to load');
